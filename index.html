@@ -26,10 +26,10 @@
             align-items: center;
             background: var(--bg-soft);
             font-family: 'Quicksand', sans-serif;
-            overflow: hidden; /* Prevents bounce scrolling on mobile */
+            overflow: hidden;
             background-image: radial-gradient(#ffcad4 0.5px, transparent 0.5px);
             background-size: 20px 20px;
-            touch-action: manipulation; /* Improves mobile tap response */
+            touch-action: manipulation;
         }
 
         .main-wrapper {
@@ -46,11 +46,11 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* --- FLUID ENVELOPE --- */
+        /* --- THE FIXED ENVELOPE (FIXES IPAD ERROR) --- */
         .envelope-container {
             position: relative;
-            width: 85vw; /* Scale with screen width */
-            max-width: 320px; /* Cap size for large screens */
+            /* Using a fixed width prevents the triangles from breaking on wider iPad screens */
+            width: 320px; 
             height: 200px;
             background: var(--env-dark);
             border-radius: 0 0 15px 15px;
@@ -59,39 +59,34 @@
             transition: 0.5s;
         }
 
-        /* Responsive Flaps using CSS calc() */
+        /* Top Flap - math: half of 320px is 160px */
         .envelope-container::before {
             content: "";
             position: absolute;
             top: 0;
+            left: 0;
             z-index: 3;
-            border-left: 42.5vw solid transparent;
-            border-right: 42.5vw solid transparent;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
             border-top: 110px solid var(--env-color);
             transform-origin: top;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Fix for desktop flaps */
-        @media (min-width: 377px) {
-            .envelope-container::before, .envelope-container::after {
-                border-left: 160px solid transparent;
-                border-right: 160px solid transparent;
-            }
-        }
-
+        /* Front Pocket - math: half of 320px is 160px */
         .envelope-container::after {
             content: "";
             position: absolute;
-            z-index: 4;
             bottom: 0;
-            border-left: 42.5vw solid transparent;
-            border-right: 42.5vw solid transparent;
+            left: 0;
+            z-index: 4;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
             border-bottom: 100px solid var(--env-dark);
             border-radius: 0 0 15px 15px;
         }
 
-        /* --- INTERACTIVE WAX SEAL --- */
+        /* --- WAX SEAL --- */
         .wax-seal {
             position: absolute;
             top: 50%;
@@ -109,24 +104,20 @@
         }
 
         .wax-shape {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background: var(--wax-base);
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-
         .wax-shape::after { content: "♥"; color: white; font-size: 24px; }
 
-        /* --- THE LETTER (Responsive Height) --- */
+        /* --- THE LETTER --- */
         .letter {
             position: absolute;
             bottom: 10px;
-            left: 5%;
-            width: 90%;
+            left: 10px;
+            width: 300px;
             height: 240px;
             background: var(--white);
             border-radius: 10px;
@@ -144,17 +135,13 @@
         #headerText { 
             font-family: 'Dancing Script', cursive; 
             color: var(--accent); 
-            font-size: clamp(1.4rem, 5vw, 1.8rem); /* Fluid text size */
+            font-size: 1.8rem;
             margin: 0; 
         }
 
-        p { 
-            color: var(--text-warm); 
-            font-size: clamp(0.85rem, 3vw, 1rem); 
-            line-height: 1.4; 
-        }
+        p { color: var(--text-warm); font-size: 1rem; line-height: 1.4; }
 
-        /* --- OPEN ANIMATION --- */
+        /* --- INTERACTIVE STATES --- */
         .open .envelope-container::before { transform: rotateX(180deg); z-index: 1; }
         .open .wax-seal { opacity: 0; pointer-events: none; }
         .open .letter { transform: translateY(-160px); opacity: 1; z-index: 2; }
@@ -171,17 +158,14 @@
             transition: 0.3s;
         }
 
-        .floating-icon { 
-            position: fixed; 
-            pointer-events: none; 
-            animation: aestheticUp 1.5s ease-out forwards; 
-            z-index: 1000; 
-            font-size: 1.5rem; 
+        /* Small phone fix (iPhone SE / smaller than 320px) */
+        @media (max-width: 330px) {
+            .envelope-container { transform: scale(0.85); }
         }
 
+        .floating-icon { position: fixed; pointer-events: none; animation: aestheticUp 1.5s ease-out forwards; z-index: 1000; font-size: 1.5rem; }
         @keyframes aestheticUp {
             0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            50% { opacity: 1; }
             100% { transform: translateY(-180px) scale(1.5); opacity: 0; }
         }
     </style>
@@ -231,15 +215,13 @@
             container.classList.add('open');
             playSfx('paperSfx');
             const music = document.getElementById('peacefulMusic');
-            music.volume = 0.2;
-            music.play().catch(() => {});
+            music.volume = 0.2; music.play().catch(() => {});
         }
 
         function changePage(step) {
             playSfx('softClick');
             document.getElementById('p' + current).style.display = 'none';
-            current += step;
-            if (current > 3) current = 1;
+            current += step; if (current > 3) current = 1;
             document.getElementById('p' + current).style.display = 'flex';
             const titles = ["For You... 🧸", "A Little Note 🌸", "Always You ❤️"];
             document.getElementById('headerText').innerText = titles[current - 1];
