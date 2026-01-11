@@ -1,3 +1,112 @@
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-soft);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+
+        .main-wrapper {
+            perspective: 1000px;
+        }
+
+        /* --- THE NEW AESTHETIC WAX SEAL --- */
+        .wax-seal {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px;
+            height: 55px;
+            z-index: 10;
+            cursor: pointer;
+            transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
+
+        /* The melted wax shape */
+        .wax-shape {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--wax-base);
+            border-radius: 44% 56% 50% 50% / 50% 46% 54% 50%; /* Irregular melted shape */
+            box-shadow: 
+                inset 2px 2px 5px var(--wax-glow),
+                inset -2px -2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+                  .wax-shape::after {
+            content: "♥";
+            color: rgba(0,0,0,0.2); /* Inset stamped look */
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+            font-size: 24px;
+        }
+
+        /* Hover effect */
+        .wax-seal:hover .wax-shape {
+            transform: scale(1.05);
+            background: #df8a8d;
+        }
+
+        /* --- ENVELOPE BASE --- */
+        .envelope-container {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: var(--env-dark);
+            border-radius: 4px 4px 15px 15px;
+            cursor: pointer;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+        }
+
+        .envelope-container::before {
+            content: "";
+            position: absolute; top: 0; z-index: 3;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 125px solid var(--env-color);
+            transform-origin: top;
+            transition: transform 0.8s ease;
+        }
+
+        .envelope-container::after {
+            content: "";
+            position: absolute; z-index: 4; bottom: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 110px solid var(--env-dark);
+            border-radius: 0 0 15px 15px;
+        }
+
+        /* --- OPEN LOGIC --- */
+        #mainContainer.open .envelope-container::before { transform: rotateX(180deg); z-index: 1; }
+        #mainContainer.open .wax-seal { opacity: 0; transform: translate(-50%, -150px) scale(0.5); pointer-events: none; }
+        #mainContainer.open .letter { transform: translateY(-160px); z-index: 2; opacity: 1; }
+              music.volume = 0.15;
+            music.play().catch(() => {});
+            playSfx('paperSfx', 0.5);
+            document.getElementById('mainContainer').classList.add('open');
+        }
+
+        function changePage(step) {
+            playSfx('softClick', 0.3);
+            let next = current + step;
+            if (next < 1 || next > total) return;
+            document.getElementById('p' + current).style.display = 'none';
+            document.getElementById('p' + next).style.display = 'flex';
+            document.getElementById('p' + next).style.flexDirection = 'column';
+            const titles = ["Missing You...", "My Message 🌸", "Final Note ❤️"];
+            document.getElementById('headerText').innerText = titles[next - 1];
+            current = next;
+        }
+
+        function resetAll() {
+            playSfx('softClick', 0.2);
+            document.getElementById('p' + current).style.display = 'none';
             document.getElementById('p1').style.display = 'flex';
             document.getElementById('p1').style.flexDirection = 'column';
             document.getElementById('mainContainer').classList.remove('open');
