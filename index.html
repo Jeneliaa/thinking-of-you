@@ -1,224 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Letter Under the Stars 🌙</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-soft: #0a0a12;      /* Midnight sky */
-            --env-color: #1a1a2e;    /* Deep navy */
-            --env-dark: #16213e;     /* Darker navy shadow */
-            --wax-base: #950740;     /* Deep crimson seal */
-            --wax-glow: #c3073f;     /* Vivid red glow */
-            --text-warm: #1a1a2e;    /* Dark ink on white paper */
-            --accent: #950740;       /* Crimson highlights */
-        }
+<style>
+    :root {
+        --bg-soft: #fdf5f5;
+        --env-color: #ffcad4;
+        --env-dark: #f4abb7;
+        --wax-base: #e5989b;
+        --wax-glow: #ffb4a2;
+        --text-warm: #6d5959;
+        --accent: #ff85a1;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--bg-soft);
-            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a12 100%);
-            font-family: 'Playfair Display', serif;
-            overflow: hidden;
-        }
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--bg-soft);
+        font-family: 'Quicksand', sans-serif;
+        overflow-x: hidden; /* Prevents side-scrolling on mobile */
+    }
 
-        .main-wrapper {
-            perspective: 1000px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
+    .main-wrapper {
+        perspective: 1000px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
 
-        /* --- RESPONSIVE ENVELOPE --- */
-        .envelope-container {
-            position: relative;
-            width: 90vw;
-            max-width: 350px;
-            height: 220px;
-            background: var(--env-dark);
-            border-radius: 4px 4px 15px 15px;
-            cursor: pointer;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
+    /* --- RESPONSIVE ENVELOPE --- */
+    .envelope-container {
+        position: relative;
+        width: 90vw;        /* Uses 90% of screen width */
+        max-width: 350px;   /* But never gets bigger than 350px */
+        height: 220px;
+        background: var(--env-dark);
+        border-radius: 4px 4px 15px 15px;
+        cursor: pointer;
+        transition: 0.5s;
+    }
 
+    /* Adjusting the flaps to match the responsive width */
+    .envelope-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        z-index: 3;
+        border-left: 45vw solid transparent;
+        border-right: 45vw solid transparent;
+        border-top: 125px solid var(--env-color);
+        transform-origin: top;
+        transition: transform 0.8s ease;
+    }
+
+    /* Desktop adjustment for flaps */
+    @media (min-width: 400px) {
         .envelope-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            z-index: 3;
-            border-left: 45vw solid transparent;
-            border-right: 45vw solid transparent;
-            border-top: 125px solid var(--env-color);
-            transform-origin: top;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
         }
-
-        /* Desktop border adjust */
-        @media (min-width: 390px) {
-            .envelope-container::before { border-left: 175px solid transparent; border-right: 175px solid transparent; }
-            .envelope-container::after { border-left: 175px solid transparent; border-right: 175px solid transparent; }
-        }
-
         .envelope-container::after {
-            content: "";
-            position: absolute;
-            z-index: 4;
-            bottom: 0;
-            border-left: 45vw solid transparent;
-            border-right: 45vw solid transparent;
-            border-bottom: 110px solid var(--env-dark);
-            border-radius: 0 0 15px 15px;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
         }
+    }
 
-        /* --- THE WAX SEAL --- */
-        .wax-seal {
-            position: absolute;
-            top: 45%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            z-index: 10;
-            transition: 0.8s;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
-        }
+    .envelope-container::after {
+        content: "";
+        position: absolute;
+        z-index: 4;
+        bottom: 0;
+        border-left: 45vw solid transparent;
+        border-right: 45vw solid transparent;
+        border-bottom: 110px solid var(--env-dark);
+        border-radius: 0 0 15px 15px;
+    }
 
-        .wax-shape {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: var(--wax-base);
-            border-radius: 50% 45% 52% 48%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 2px 2px 5px var(--wax-glow), inset -2px -2px 5px #4e4e4e;
-        }
+    .letter {
+        position: absolute;
+        bottom: 15px;
+        left: 5%;
+        width: 90%;
+        height: 250px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-sizing: border-box;
+        text-align: center;
+        transition: 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
 
-        .wax-shape::after { content: "♥"; color: rgba(0,0,0,0.4); font-size: 28px; }
+    /* Open State */
+    .open .envelope-container::before { transform: rotateX(180deg); z-index: 1; }
+    .open .wax-seal { opacity: 0; pointer-events: none; }
+    .open .letter { 
+        transform: translateY(-130px); /* Lifted slightly less for mobile safety */
+        opacity: 1; 
+        z-index: 2; 
+    }
 
-        /* --- THE LETTER --- */
-        .letter {
-            position: absolute;
-            bottom: 15px;
-            left: 5%;
-            width: 90%;
-            height: 250px;
-            background: #fff;
-            border-radius: 8px;
-            padding: 25px;
-            box-sizing: border-box;
-            text-align: center;
-            transition: 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        #headerText { font-family: 'Dancing Script', cursive; color: var(--accent); font-size: 1.8rem; margin: 0; }
-        p { color: #333; font-size: 1rem; line-height: 1.4; }
-
-        .nav-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Playfair Display', serif;
-            font-weight: bold;
-        }
-
-        /* --- OPEN LOGIC --- */
-        .open .envelope-container::before { transform: rotateX(180deg); z-index: 1; }
-        .open .wax-seal { opacity: 0; pointer-events: none; }
-        .open .letter { transform: translateY(-140px); opacity: 1; z-index: 2; }
-
-        /* Floating icons */
-        .floating-icon { position: fixed; pointer-events: none; animation: up 1.5s ease-out forwards; z-index: 1000; font-size: 24px; }
-        @keyframes up { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-120px) scale(1.5); opacity: 0; } }
-    </style>
-</head>
-<body>
-
-    <div id="mainContainer" class="main-wrapper">
-        <div class="envelope-container" onclick="openEnvelope()">
-            <div class="wax-seal"><div class="wax-shape"></div></div>
-
-            <div class="letter">
-                <h3 id="headerText">Under the stars...</h3>
-                
-                <div id="p1" class="page" style="display: flex; flex-direction: column;">
-                    <p>I was looking at the moon tonight and it reminded me of you.<br><b>I really miss you.</b></p>
-                    <button class="nav-btn" onclick="event.stopPropagation(); changePage(1)">Read More ✨</button>
-                </div>
-
-                <div id="p2" class="page" style="display: none; flex-direction: column;">
-                    <p>Even though we're far apart, you're always on my mind.</p>
-                    <div style="display: flex; gap: 8px; justify-content: center;">
-                        <button class="nav-btn" onclick="event.stopPropagation(); heartExplosion(event)">Send Love</button>
-                        <button class="nav-btn" onclick="event.stopPropagation(); changePage(1)">Next 🌙</button>
-                    </div>
-                </div>
-
-                <div id="p3" class="page" style="display: none; flex-direction: column;">
-                    <p>Can't wait to see you again. Until then, stay sweet. 🥰</p>
-                    <button onclick="event.stopPropagation(); resetAll()" style="background:none; border:none; text-decoration:underline; color:#999; cursor:pointer; font-size: 0.8rem;">Start Over</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <audio id="peacefulMusic" loop><source src="https://www.chosic.com/wp-content/uploads/2021/04/Warm-Light.mp3" type="audio/mpeg"></audio>
-
-    <script>
-        let current = 1;
-        const total = 3;
-
-        function openEnvelope() {
-            document.getElementById('mainContainer').classList.add('open');
-            const music = document.getElementById('peacefulMusic');
-            music.volume = 0.2;
-            music.play().catch(() => {});
-        }
-
-        function changePage(step) {
-            document.getElementById('p' + current).style.display = 'none';
-            current += step;
-            if (current > total) current = 1; 
-            document.getElementById('p' + current).style.display = 'flex';
-            
-            const titles = ["Under the stars...", "Deep Thoughts ✨", "Goodnight ❤️"];
-            document.getElementById('headerText').innerText = titles[current - 1];
-        }
-
-        function resetAll() {
-            document.getElementById('mainContainer').classList.remove('open');
-            document.getElementById('p' + current).style.display = 'none';
-            current = 1;
-            document.getElementById('p1').style.display = 'flex';
-            document.getElementById('headerText').innerText = "Under the stars...";
-        }
-
-        function heartExplosion(e) {
-            const icons = ['✨', '🌟', '🌙', '❤️'];
-            for (let i = 0; i < 10; i++) {
-                const h = document.createElement('div');
-                h.innerHTML = icons[Math.floor(Math.random() * icons.length)];
-                h.className = 'floating-icon';
-                h.style.left = e.clientX + 'px';
-                h.style.top = e.clientY + 'px';
-                document.body.appendChild(h);
-                setTimeout(() => h.remove(), 1500);
-            }
-        }
-    </script>
-</body>
-</html>
+    /* Mobile Text Sizes */
+    @media (max-width: 380px) {
+        #headerText { font-size: 1.4rem; }
+        p { font-size: 0.9rem; }
+        .nav-btn { padding: 6px 12px; font-size: 0.8rem; }
+    }
+</style>
