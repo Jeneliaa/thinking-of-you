@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thinking of You 🧸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-soft: #fdf5f5;
+            --env-color: #ffcad4;
+            --env-dark: #f4abb7;
+            --wax-base: #e5989b; 
+            --wax-glow: #ffb4a2;
+            --text-warm: #6d5959;
+            --accent: #ff85a1;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-soft);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+
+        .main-wrapper { perspective: 1000px; }
+
+        .wax-seal {
+            position: absolute;
+            top: 45%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55px; height: 55px;
+            z-index: 10; cursor: pointer;
+            transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
+
+        .wax-shape {
+            position: absolute; width: 100%; height: 100%;
+            background: var(--wax-base);
+            border-radius: 44% 56% 50% 50% / 50% 46% 54% 50%;
+            box-shadow: inset 2px 2px 5px var(--wax-glow), inset -2px -2px 5px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .wax-shape::after { content: "♥"; color: rgba(0,0,0,0.2); font-size: 24px; }
+
+        .envelope-container {
+            position: relative; width: 320px; height: 220px;
+            background: var(--env-dark); border-radius: 4px 4px 15px 15px;
+            cursor: pointer; box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+        }
+
+        .envelope-container::before {
+            content: ""; position: absolute; top: 0; z-index: 3;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-top: 125px solid var(--env-color);
+            transform-origin: top; transition: transform 0.8s ease;
+        }
+
+        .envelope-container::after {
+            content: ""; position: absolute; z-index: 4; bottom: 0;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-bottom: 110px solid var(--env-dark); border-radius: 0 0 15px 15px;
+        }
+
+        #mainContainer.open .envelope-container::before { transform: rotateX(180deg); z-index: 1; }
+        #mainContainer.open .wax-seal { opacity: 0; transform: translate(-50%, -150px) scale(0.5); pointer-events: none; }
+        #mainContainer.open .letter { transform: translateY(-160px); z-index: 2; opacity: 1; }
+
+        .letter {
+            position: absolute; bottom: 15px; left: 10px;
+            width: 300px; height: 250px;
+            background: #fff; border-radius: 8px; padding: 30px;
+            box-sizing: border-box; text-align: center;
+            transition: all 0.9s cubic-bezier(0.2, 1, 0.3, 1) 0.3s;
+            opacity: 0; display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        #headerText { font-family: 'Dancing Script', cursive; color: var(--accent); font-size: 1.8rem; margin: 0; }
+        p { color: var(--text-warm); font-size: 1rem; line-height: 1.6; }
+        .nav-btn { background: #fdf2f4; color: var(--accent); border: 1px solid #ffcad4; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 600; }
+        
+        .heart-pop { position: fixed; pointer-events: none; animation: popUp 1.5s forwards; }
+        @keyframes popUp { 
+            0% { transform: translateY(0); opacity: 1; } 
+            100% { transform: translateY(-100px); opacity: 0; } 
+        }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" class="main-wrapper">
+        <div class="envelope-container" onclick="openEnvelope()">
+            <div class="wax-seal"><div class="wax-shape"></div></div>
+            <div class="letter">
+                <h3 id="headerText">Missing You...</h3>
+                <div id="p1" class="page">
+                    <p>My world feels a little quieter without you here... <br> <b>I miss you more than I can say.</b></p>
+                    <button class="nav-btn" onclick="event.stopPropagation(); changePage(1)">Read My Message 🌸</button>
+                </div>
+                <div id="p2" class="page" style="display:none;">
+                    <p>I just wanted to say how much I appreciate you! ✨ (and how much I'm craving one of your hugs...)</p>
+                    <button class="nav-btn" onclick="event.stopPropagation(); heartExplosion(event)">Send Hug ❤️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="peacefulMusic" loop><source src="https://www.chosic.com/wp-content/uploads/2021/04/Warm-Light.mp3" type="audio/mpeg"></audio>
+
+    <script>
+        let current = 1;
+        function openEnvelope() {
+            document.getElementById('peacefulMusic').play();
+            document.getElementById('mainContainer').classList.add('open');
+            document.getElementById('p1').style.display = 'flex';
+            document.getElementById('p1').style.flexDirection = 'column';
+        }
+        function changePage(n) {
+            document.getElementById('p1').style.display = 'none';
+            document.getElementById('p2').style.display = 'flex';
+            document.getElementById('p2').style.flexDirection = 'column';
+        }
+        function heartExplosion(e) {
+            for(let i=0; i<10; i++) {
+                const h = document.createElement('div');
+                h.innerHTML = '❤️'; h.className = 'heart-pop';
+                h.style.left = e.clientX + (Math.random()*40-20) + 'px';
+                h.style.top = e.clientY + 'px';
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 1500);
+            }
+            setTimeout(() => alert("I miss you more! 🥰"), 500);
+        }
+    </script>
+</body>
+</html>
