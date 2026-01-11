@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg-gradient: linear-gradient(180deg, #fff5f7 0%, #ffeef2 100%);
-            --glass-white: rgba(255, 255, 255, 0.8);
+            --glass-white: rgba(255, 255, 255, 0.85);
             --soft-pink: #ffc2d1;
             --deep-pink: #fb6f92;
             --text-color: #8d7b8d;
@@ -21,28 +21,23 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* --- FLOATING DECOR --- */
-        .decoration {
-            position: absolute; pointer-events: none; z-index: 1;
-            opacity: 0.4; animation: floatAnim 6s ease-in-out infinite;
-        }
-        @keyframes floatAnim {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
+        .decoration { position: absolute; pointer-events: none; z-index: 1; opacity: 0.5; animation: floatAnim 6s ease-in-out infinite; }
+        @keyframes floatAnim { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
 
-        /* --- GLASS LETTER (TOP) --- */
+        /* --- THE LETTER --- */
         .letter-container {
             margin-top: 40px; width: 85vw; max-width: 320px;
             background: var(--glass-white); backdrop-filter: blur(10px);
             border-radius: 30px; border: 2px solid white;
             padding: 30px 20px; text-align: center;
             box-shadow: 0 10px 30px rgba(255, 182, 193, 0.2);
-            opacity: 0; transform: scale(0.9);
+            opacity: 0; transform: translateY(20px);
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
+            pointer-events: none; /* Allows clicking THROUGH to the cat */
         }
-        .open .letter-container { opacity: 1; transform: scale(1); }
+        .open .letter-container { opacity: 1; transform: translateY(0); }
+        .letter-container button, .letter-container h3, .letter-container p { pointer-events: auto; }
 
         h3 { font-family: 'Dancing Script', cursive; color: var(--deep-pink); font-size: 2rem; margin: 0 0 10px 0; }
         p { color: var(--text-color); font-size: 1rem; line-height: 1.5; margin-bottom: 20px; }
@@ -54,69 +49,47 @@
         }
         .nav-btn:active { transform: translateY(2px); box-shadow: none; }
 
-        /* --- THE CAT & SNACK (BOTTOM) --- */
-        .cat-area {
-            position: absolute; bottom: 80px;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 5;
-        }
-        .focus-cat .cat-area { transform: scale(1.2); }
+        /* --- THE CAT --- */
+        .cat-area { position: absolute; bottom: 80px; transition: transform 0.5s; z-index: 5; }
+        .focus-cat .cat-area { transform: scale(1.1); }
 
         #snack {
             position: absolute; top: -60px; left: 50%; transform: translateX(-50%) scale(0);
             font-size: 50px; cursor: pointer; z-index: 1000;
             transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 5px 10px rgba(251, 111, 146, 0.3));
         }
         .open #snack { transform: translateX(-50%) scale(1); animation: bounce 2s infinite; }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
+        @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-10px); } }
 
         .cat-box {
-            position: relative; width: 150px; height: 120px;
+            position: relative; width: 150px; height: 110px;
             background: white; border-radius: 50px 50px 40px 40px;
             border: 3px solid #fff0f3; cursor: pointer;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 15px 35px rgba(251, 111, 146, 0.1);
         }
 
         .face { width: 60px; height: 30px; position: relative; }
-        .eye { width: 6px; height: 6px; background: #6b5b6b; border-radius: 50%; position: absolute; top: 10px; }
+        .eye { width: 6px; height: 6px; background: #6b5b6b; border-radius: 50%; position: absolute; top: 10px; transition: 0.3s; }
         .eye.left { left: 10px; } .eye.right { right: 10px; }
-        .mouth { width: 12px; height: 8px; border: 2px solid #6b5b6b; border-top: 0; 
-                 border-radius: 0 0 10px 10px; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .mouth { width: 12px; height: 8px; border: 2px solid #6b5b6b; border-top: 0; border-radius: 0 0 10px 10px; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); }
 
         .heart-eyes .eye { background: transparent !important; }
         .heart-eyes .eye::before { content: '💖'; font-size: 14px; position: absolute; top: -5px; left: -4px; }
 
-        .lid {
-            position: absolute; top: 0; width: 100%; height: 40px;
-            background: var(--soft-pink); border-radius: 25px;
-            z-index: 10; transition: 0.8s;
-        }
+        .lid { position: absolute; top: 0; width: 100%; height: 40px; background: var(--soft-pink); border-radius: 25px; z-index: 10; transition: 0.6s; }
         .ear { width: 35px; height: 35px; background: var(--soft-pink); position: absolute; top: -15px; border-radius: 10px; transform: rotate(45deg); }
         .ear.left { left: 20px; } .ear.right { right: 20px; }
 
         .open .lid { transform: translateY(100px); opacity: 0; pointer-events: none; }
 
-        /* --- MAGIC SPARKLES --- */
-        .sparkle {
-            position: absolute; color: #ff8fab; font-size: 20px;
-            pointer-events: none; animation: sparkleOut 1s forwards;
-        }
-        @keyframes sparkleOut {
-            to { transform: translateY(-50px) scale(0); opacity: 0; }
-        }
+        .sparkle { position: absolute; color: #ff8fab; font-size: 20px; pointer-events: none; animation: sparkleOut 1s forwards; }
+        @keyframes sparkleOut { to { transform: translateY(-60px) scale(0); opacity: 0; } }
     </style>
 </head>
 <body id="stage">
 
     <div class="decoration" style="top: 10%; left: 10%;">✨</div>
-    <div class="decoration" style="top: 20%; right: 15%; animation-delay: 1s;">🌸</div>
-    <div class="decoration" style="bottom: 20%; left: 15%; animation-delay: 2s;">☁️</div>
+    <div class="decoration" style="top: 15%; right: 10%;">🌸</div>
 
     <div class="letter-container">
         <h3 id="title">hello sweetie...</h3>
@@ -130,7 +103,7 @@
         </div>
         <div id="p3" class="page" style="display:none">
             <p>sending you kitty hugs and strawberry dreams! ❤️<br><br><b>— love, jenelia</b></p>
-            <button onclick="reset()" style="background:none; border:none; color:#ddd; text-decoration:underline; cursor:pointer; font-size:0.8rem;">close box</button>
+            <button onclick="reset()" style="background:none; border:none; color:#ddd; text-decoration:underline; cursor:pointer; font-size:0.8rem; margin-top:10px;">close</button>
         </div>
     </div>
 
@@ -151,35 +124,34 @@
         let step = 1;
         const pat = document.getElementById('patSound');
 
+        function playSound() {
+            pat.currentTime = 0;
+            pat.volume = 0.2;
+            pat.play().catch(e => console.log("Sound blocked until tap"));
+        }
+
         function openBox() {
             document.getElementById('stage').classList.add('open');
-            pat.volume = 0.2; pat.play();
+            playSound();
         }
 
         function nextPage(n) {
-            pat.currentTime = 0; pat.play();
+            playSound();
             document.getElementById('p' + step).style.display = 'none';
             step = n;
             document.getElementById('p' + step).style.display = 'block';
-            
             if(step === 2) document.getElementById('stage').classList.add('focus-cat');
             else document.getElementById('stage').classList.remove('focus-cat');
         }
 
         function eat() {
-            const snack = document.getElementById('snack');
-            snack.style.display = 'none';
+            document.getElementById('snack').style.display = 'none';
             document.getElementById('catFace').classList.add('heart-eyes');
-            pat.currentTime = 0; pat.play();
-            
-            // Create sparkles
-            for(let i=0; i<5; i++) {
+            playSound();
+            for(let i=0; i<6; i++) {
                 const s = document.createElement('div');
-                s.className = 'sparkle';
-                s.innerHTML = '✨';
-                s.style.left = '50%';
-                s.style.top = '0';
-                s.style.marginLeft = (Math.random() * 40 - 20) + 'px';
+                s.className = 'sparkle'; s.innerHTML = '✨'; s.style.left = '50%';
+                s.style.marginLeft = (Math.random() * 60 - 30) + 'px';
                 document.getElementById('catArea').appendChild(s);
                 setTimeout(() => s.remove(), 1000);
             }
