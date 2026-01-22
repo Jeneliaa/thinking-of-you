@@ -282,11 +282,12 @@ canvas{
 <canvas id="fireworks"></canvas>
 <canvas id="sparkles"></canvas>
 
-<audio id="sfx-shimmer"><source src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" type="audio/mpeg"></audio>
-<audio id="sfx-tick"><source src="https://assets.mixkit.co/active_storage/sfx/2544/2544-preview.mp3" type="audio/mpeg"></audio>
-<audio id="sfx-pop"><source src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" type="audio/mpeg"></audio>
-<audio id="sfx-blow"><source src="https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3" type="audio/mpeg"></audio>
-<audio id="sfx-type"><source src="https://assets.mixkit.co/active_storage/sfx/2545/2545-preview.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-open" preload="auto">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-tick" preload="auto">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2544/2544-preview.mp3" type="audio/mpeg">
+</audio>
 
 <div id="container" class="main-card">
 
@@ -355,12 +356,11 @@ canvas{
 const fw=document.getElementById("fireworks"),ctx=fw.getContext("2d");
 const sp=document.getElementById("sparkles"),sctx=sp.getContext("2d");
 
-function playSFX(id, vol=0.5) {
+function playSFX(id) {
     const sound = document.getElementById(id);
     if(sound) {
         sound.currentTime = 0;
-        sound.volume = vol;
-        sound.play().catch(e => console.log("Sound interaction blocked"));
+        sound.play().catch(e => console.log("Sound interaction needed"));
     }
 }
 
@@ -379,10 +379,11 @@ resize();addEventListener("resize",resize);
 let celebrating=false;
 
 function nextStep(n){
+    // Open action sound on every click (except the middle of countdown)
+    playSFX('sfx-open');
+
     document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
     document.getElementById("step-"+n).classList.add("active");
-
-    if(n===2) playSFX('sfx-shimmer', 0.3);
 
     if(n===4){
         document.body.classList.add("dark-mode");
@@ -402,21 +403,21 @@ function nextStep(n){
 }
 
 function startCountdown(){
-    nextStep(3);
+    nextStep(3); // This plays the sfx-open via nextStep
     let c=3;
     const el=document.getElementById("countdown-timer");
     const progress = document.getElementById("progress");
     const total = 565; 
     
     el.textContent=c;
-    playSFX('sfx-tick', 0.4);
+    playSFX('sfx-tick'); // First tick
     progress.style.strokeDashoffset = 0;
 
     const t=setInterval(()=>{
         c--;
         if(c >= 0) {
             el.textContent=c;
-            playSFX('sfx-tick', 0.4);
+            playSFX('sfx-tick'); // Sound for 2, 1, 0
             progress.style.strokeDashoffset = total - (total * (c / 3));
         }
         if(c === -1){
@@ -430,7 +431,6 @@ function typeWriter(text, i) {
     const el = document.getElementById("typewriter-text");
     if (i < text.length) {
         el.innerHTML = text.substring(0, i + 1) + '<span class="cursor">|</span>';
-        if(text[i] !== " " && i % 2 === 0) playSFX('sfx-type', 0.1);
         setTimeout(() => typeWriter(text, i + 1), Math.random() * 50 + 40);
     } else {
         el.innerHTML = text;
@@ -475,7 +475,6 @@ class Particle{
 }
 
 function explode(x,y){
-    playSFX('sfx-pop', 0.2);
     for(let i=0;i<80;i++)particles.push(new Particle(x,y));
 }
 
@@ -497,7 +496,7 @@ addEventListener("mousemove",e=>{
 });
 
 function blowCandle(){
-    playSFX('sfx-blow', 0.6);
+    playSFX('sfx-open'); // Play click sound when blowing out candle
     document.getElementById("flame").style.display="none";
     document.getElementById("nextBtn").style.display="inline-block";
     confetti({ 
