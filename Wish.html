@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Evika</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Pacifico&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root{
+    /* Evika's Amethyst & Gold Palette */
+    --primary:#9c27b0;
+    --secondary:#e1bee7;
+    --accent:#ffd700;
+    --dark-purple:#4a148c;
+    --text-color:#ffffff;
+}
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100svh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    overflow:hidden;
+    transition:background 1s ease;
+}
+
+.dark-mode{
+    background:radial-gradient(circle at top,#1a0033,#000);
+}
+
+canvas{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+}
+#fireworks{z-index:1;display:none}
+
+.main-card{
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(20px);
+    border-radius:32px;
+    padding:clamp(1.8rem,4vw,2.8rem);
+    width:min(90%,420px);
+    text-align:center;
+    border:1px solid rgba(255,255,255,.2);
+    position:relative;
+    z-index:10;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.step-4-style{
+    background:transparent;
+    backdrop-filter:none;
+    border:none;
+}
+
+.step{display:none}
+.step.active{display:block;animation:fade .9s ease forwards}
+
+@keyframes fade{
+    from{opacity:0;transform:scale(.92)}
+    to{opacity:1;transform:scale(1)}
+}
+
+.glow-text{
+    font-family:'Pacifico',cursive;
+    font-size:clamp(2.2rem,6vw,3rem);
+    color:var(--accent);
+    text-shadow:
+        0 0 10px rgba(255,215,0,.8),
+        0 0 20px rgba(156,39,176,.6);
+}
+
+/* COUNTDOWN */
+.countdown-wrap {
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.countdown-svg {
+    position: absolute;
+    transform: rotate(-90deg);
+}
+
+.circle-bg { stroke: rgba(255, 255, 255, 0.1); fill: none; stroke-width: 8; }
+.circle-progress {
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 565;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+}
+
+#countdown-timer{
+    font-size: 6rem;
+    font-weight: 700;
+    color: white;
+    z-index: 2;
+}
+
+.btn{
+    background:var(--primary);
+    color:white;
+    border:none;
+    padding:14px 40px;
+    border-radius:50px;
+    font-weight:600;
+    margin-top:25px;
+    cursor:pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+.btn:hover { background: var(--dark-purple); transform: translateY(-2px); }
+.btn:active { transform: scale(0.95); }
+
+/* CAKE */
+.cake-wrapper {
+    width: 220px;
+    height: 250px;
+    margin: 20px auto;
+    position: relative;
+    cursor: pointer;
+    animation: cakeFloat 4s ease-in-out infinite;
+}
+
+@keyframes cakeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.tier {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 12px 12px 5px 5px;
+}
+
+.tier-1 { width: 180px; height: 60px; bottom: 0; background: #ce93d8; z-index: 1; }
+.tier-2 { width: 130px; height: 55px; bottom: 60px; background: #e1bee7; z-index: 2; }
+.tier-3 { width: 80px; height: 50px; bottom: 115px; background: #f3e5f5; z-index: 3; }
+
+.drip {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 12px;
+    background: var(--dark-purple);
+    border-radius: 10px 10px 0 0;
+}
+
+.candle-unit {
+    position: absolute;
+    bottom: 165px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.stick {
+    width: 8px;
+    height: 45px;
+    background: repeating-linear-gradient(45deg, #fff, #fff 4px, var(--primary) 4px, var(--primary) 8px);
+}
+.flame {
+    width: 16px;
+    height: 26px;
+    background: radial-gradient(circle, #fff, #fff176, #ffb300, transparent);
+    border-radius: 50% 50% 20% 20%;
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 20px var(--accent);
+    animation: flicker 0.1s infinite alternate;
+}
+
+@keyframes flicker {
+    0% { transform: translateX(-50%) scale(1); }
+    100% { transform: translateX(-52%) scale(1.1); }
+}
+
+/* MESSAGE CARD */
+.final-card{
+    background:#ffffff;
+    padding:35px 25px;
+    border-radius:20px;
+    text-align: left;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+#typewriter-text {
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.8;
+    min-height: 150px;
+}
+
+.cursor { font-weight: bold; color: var(--primary); animation: blink 0.7s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+#signature {
+    text-align: right;
+    font-family: 'Pacifico', cursive;
+    color: var(--primary);
+    opacity: 0;
+    transition: all 1.5s ease;
+    margin-top: 20px;
+}
+
+#signature.show { opacity: 1; }
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div id="container" class="main-card">
+
+<div id="step-1" class="step active">
+    <p style="color:white">✨ A little magic for you, Evika...</p>
+    <button class="btn" onclick="nextStep(2)">Begin 💜</button>
+</div>
+
+<div id="step-2" class="step">
+    <p style="color:white">Today is all about you...</p>
+    <button class="btn" onclick="startCountdown()">Ready? 🎂</button>
+</div>
+
+<div id="step-3" class="step">
+    <div class="countdown-wrap">
+        <svg class="countdown-svg" width="200" height="200">
+            <circle class="circle-bg" cx="100" cy="100" r="90"></circle>
+            <circle class="circle-progress" id="progress" cx="100" cy="100" r="90"></circle>
+        </svg>
+        <div id="countdown-timer">3</div>
+    </div>
+</div>
+
+<div id="step-4" class="step">
+    <h1 class="glow-text">Happy Birthday, Evika!</h1>
+    <button class="btn" onclick="nextStep(5)">Make a Wish 🌟</button>
+</div>
+
+<div id="step-5" class="step">
+    <h2 style="color:white">Blow the candle 🌬️</h2>
+    <div class="cake-wrapper" onclick="blowCandle()">
+        <div class="candle-unit">
+            <div class="flame" id="flame"></div>
+            <div class="stick"></div>
+        </div>
+        <div class="tier tier-3"><div class="drip"></div></div>
+        <div class="tier tier-2"><div class="drip"></div></div>
+        <div class="tier tier-1"><div class="drip"></div></div>
+    </div>
+    <button id="nextBtn" class="btn" style="display:none" onclick="nextStep(6)">Open Message →</button>
+</div>
+
+<div id="step-6" class="step">
+    <div class="final-card">
+        <div id="typewriter-text"></div>
+        <p id="signature">With love, always. ✨</p>
+    </div>
+</div>
+
+</div>
+
+<script>
+const fw=document.getElementById("fireworks"),ctx=fw.getContext("2d");
+
+function resize(){
+    const dpr=window.devicePixelRatio||1;
+    fw.width=innerWidth*dpr;
+    fw.height=innerHeight*dpr;
+    ctx.scale(dpr,dpr);
+}
+resize();addEventListener("resize",resize);
+
+let celebrating=false;
+
+function nextStep(n){
+    document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+    document.getElementById("step-"+n).classList.add("active");
+
+    if(n===4){
+        document.body.classList.add("dark-mode");
+        container.classList.add("step-4-style");
+        fw.style.display="block";
+        celebrating=true;
+        animateFireworks();
+    } else if (n === 6) {
+        const msg = "Dearest Evika,\n\nOn your birthday, I wanted to send you something as bright and beautiful as you are. \n\nMay this year bring you endless magic, success in everything you touch, and a heart full of happiness. You deserve the world!\n\nHappy Birthday! 💜";
+        setTimeout(() => typeWriter(msg, 0), 500);
+    }
+}
+
+function startCountdown(){
+    nextStep(3);
+    let c=3;
+    const el=document.getElementById("countdown-timer");
+    const progress = document.getElementById("progress");
+    const total = 565; 
+    
+    const t=setInterval(()=>{
+        c--;
+        if(c >= 0) {
+            el.textContent=c;
+            progress.style.strokeDashoffset = total - (total * (c / 3));
+        }
+        if(c === -1){
+            clearInterval(t);
+            nextStep(4);
+        }
+    },1000);
+}
+
+function typeWriter(text, i) {
+    const el = document.getElementById("typewriter-text");
+    if (i < text.length) {
+        el.innerHTML = text.substring(0, i + 1) + '<span class="cursor">|</span>';
+        setTimeout(() => typeWriter(text, i + 1), 50);
+    } else {
+        el.innerHTML = text;
+        document.getElementById("signature").classList.add("show");
+    }
+}
+
+// Simple Fireworks
+let particles=[];
+function animateFireworks(){
+    if(!celebrating)return;
+    ctx.fillStyle="rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,innerWidth,innerHeight);
+    
+    if(Math.random()<0.05){
+        const x=Math.random()*innerWidth, y=Math.random()*innerHeight/2;
+        for(let i=0;i<50;i++){
+            particles.push({
+                x,y,
+                vx:Math.random()*6-3,
+                vy:Math.random()*6-3,
+                life:1,
+                color:`hsl(${Math.random()*360}, 70%, 60%)`
+            });
+        }
+    }
+    
+    particles.forEach((p,i)=>{
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life-=0.01;
+        ctx.fillStyle=p.color;
+        ctx.globalAlpha=p.life;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fill();
+        if(p.life<=0)particles.splice(i,1);
+    });
+    requestAnimationFrame(animateFireworks);
+}
+
+function blowCandle(){
+    document.getElementById("flame").style.display="none";
+    document.getElementById("nextBtn").style.display="inline-block";
+    confetti({ 
+        particleCount: 150, 
+        spread: 70, 
+        origin: { y: 0.6 },
+        colors: ['#9c27b0', '#ffd700', '#ffffff'] 
+    });
+}
+</script>
+
+</body>
+</html>
